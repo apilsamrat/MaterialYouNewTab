@@ -85,6 +85,84 @@
         } catch (e) {
             // ignore
         }
+        // If defaults.json contains indexedDB data (backup-style), restore it into ImageDB
+        try {
+            var indexed = parsed.indexedDB || parsed.indexedDb || null;
+            if (indexed && typeof window !== 'undefined') {
+                // Expose a flag so other scripts (wallpaper.js) can wait for this restore
+                window.mynt_defaults_restoringIndexDB = true;
+
+                // Minimal IndexedDB helper to open ImageDB
+                function openImageDB() {
+                    return new Promise(function (resolve, reject) {
+                        var req = indexedDB.open('ImageDB', 1);
+                        req.onupgradeneeded = function (ev) {
+                            var db = ev.target.result;
+                            if (!db.objectStoreNames.contains('backgroundImages')) db.createObjectStore('backgroundImages');
+                        };
+                        req.onsuccess = function (ev) { resolve(ev.target.result); };
+                        req.onerror = function (ev) { reject(ev); };
+                    });
+                }
+
+                function dataUrlToBlob(dataUrl) {
+                    var parts = dataUrl.split(',');
+                    var meta = parts[0];
+                    var byteString = atob(parts[1]);
+                    var mime = meta.match(/:(.*?);/)[1];
+                    var ab = new ArrayBuffer(byteString.length);
+                    var ia = new Uint8Array(ab);
+                    for (var i = 0; i < byteString.length; i++) ia[i] = byteString.charCodeAt(i);
+                    return new Blob([ab], { type: mime });
+                }
+
+                (function restoreIndexedDB() {
+                    // We'll attempt to write only the keys present under indexed (typical keys: backgroundImage, lastUpdateTime, imageType)
+                    openImageDB().then(function (db) {
+                        var tx = db.transaction('backgroundImages', 'readwrite');
+                        var store = tx.objectStore('backgroundImages');
+
+                        var entries = Object.entries(indexed || {});
+                        entries.forEach(function (_ref2) {
+                            var k = _ref2[0], v = _ref2[1];
+                            try {
+                                // If value looks like backup blob wrapper { isBlob: true, blob: dataUrl }
+                                if (v && typeof v === 'object' && v.isBlob && v.blob) {
+                                    var blob = dataUrlToBlob(v.blob);
+                                    store.put(blob, k);
+                                } else if (typeof v === 'string' && v.startsWith('data:')) {
+                                    // direct dataURL string
+                                    try { store.put(dataUrlToBlob(v), k); } catch (e) { store.put(v, k); }
+                                } else {
+                                    // plain value (timestamp or type)
+                                    store.put(v, k);
+                                }
+                            } catch (e) {
+                                try { store.put(v, k); } catch (ee) { /* ignore */ }
+                            }
+                        });
+
+                        tx.oncomplete = function () {
+                            try { window.mynt_defaults_restoringIndexDB = false; } catch (e) {}
+                            try { window.dispatchEvent(new CustomEvent('mynt-indexeddb-restored')); } catch (e) {}
+                            db.close();
+                            if (typeof console !== 'undefined' && console.debug) console.debug('[defaults] restored indexedDB entries from defaults.json');
+                        };
+
+                        tx.onerror = function (ev) {
+                            try { window.mynt_defaults_restoringIndexDB = false; } catch (e) {}
+                            try { window.dispatchEvent(new CustomEvent('mynt-indexeddb-restored')); } catch (e) {}
+                            db.close();
+                        };
+                    }).catch(function (err) {
+                        try { window.mynt_defaults_restoringIndexDB = false; } catch (e) {}
+                        try { window.dispatchEvent(new CustomEvent('mynt-indexeddb-restored')); } catch (e) {}
+                    });
+                })();
+            }
+        } catch (e) {
+            // ignore restore errors
+        }
     } catch (e) {
         // Fail silently; nothing to do during initialization
         console.error("defaults initialization failed:", e);

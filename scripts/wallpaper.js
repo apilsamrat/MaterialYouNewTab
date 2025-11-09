@@ -103,11 +103,7 @@ document.getElementById("imageUpload").addEventListener("change", function (even
 const RANDOM_IMAGE_URL = "https://picsum.photos/1920/1080";
 
 async function applyRandomImage(showConfirmation = true) {
-    if (showConfirmation && !(await confirmPrompt(
-        translations[currentLanguage]?.confirmWallpaper || translations["en"].confirmWallpaper
-    ))) {
-        return;
-    }
+   
     try {
         const response = await fetch(RANDOM_IMAGE_URL);
         const blob = await response.blob(); // Get Blob from response
@@ -196,6 +192,20 @@ document.getElementById("clearImage").addEventListener("click", async function (
 });
 document.getElementById("randomImageTrigger").addEventListener("click", applyRandomImage);
 
-// Start image check on page load
-checkAndUpdateImage();
+// Start image check on page load. If defaults.js is restoring IndexedDB entries, wait for it.
+if (typeof window !== 'undefined' && window.mynt_defaults_restoringIndexDB) {
+    // Wait for the restore event (or fallback to timeout)
+    var restoreHandler = function () {
+        try { window.removeEventListener('mynt-indexeddb-restored', restoreHandler); } catch (e) {}
+        checkAndUpdateImage();
+    };
+    window.addEventListener('mynt-indexeddb-restored', restoreHandler);
+    // Fallback: if no event after 2s, just run the check
+    setTimeout(function () {
+        try { window.removeEventListener('mynt-indexeddb-restored', restoreHandler); } catch (e) {}
+        checkAndUpdateImage();
+    }, 2000);
+} else {
+    checkAndUpdateImage();
+}
 // ------------------------ End of BG Image --------------------------
