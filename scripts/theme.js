@@ -51,6 +51,8 @@ document.addEventListener("DOMContentLoaded", () => {
     const storedCustomColor = localStorage.getItem(customThemeStorageKey);
     if (storedCustomColor) {
         applyCustomTheme(storedCustomColor);
+        // Reflect saved custom color in the native color input
+        if (colorPicker) colorPicker.value = storedCustomColor;
         // Uncheck all radio buttons
         radioButtons.forEach(radio => {
             radio.checked = false;
@@ -194,6 +196,13 @@ function isNearWhite(hex, threshold = 240) {
 
 const applyCustomTheme = (color) => {
     let adjustedColor = isNearWhite(color) ? "#696969" : color;
+
+    // Keep the native color picker in sync with the applied custom color
+    try {
+        if (typeof colorPicker !== 'undefined' && colorPicker) colorPicker.value = color;
+    } catch (e) {
+        console.warn('Could not set colorPicker value:', e);
+    }
 
     const lighterColorHex = adjustHexColor(adjustedColor, 0.7);
     const lightTin = adjustHexColor(adjustedColor, 0.9);

@@ -14,7 +14,9 @@
     "bookmarkGridCheckboxState": "checked",
     "aiToolsSettings": "[\"chatGPT\",\"gemini\",\"copilot\",\"claude\",\"deepseek\",{\"perplexity\":false},{\"grok\":false},{\"metaAI\":false},{\"qwen\":false},{\"firefly\":false}]",
     "selectedLanguage": "en",
-    "micIconVisible": "true"
+    "micIconVisible": "true",
+    "customThemeColor": "#EA1010",
+    "LoadingScreenColor": "rgb(255, 204, 191)"
   },
   "indexedDB": {}
 }
