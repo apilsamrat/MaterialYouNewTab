@@ -184,10 +184,23 @@ async function initializeClock() {
             };
 
             const newDateString = dateDisplay[currentLanguage] || dateDisplay.default;
-            // Update date if date actually changed or if it's the first time
-            if (newDateString !== lastDateString) {
-                document.getElementById("date").innerText = newDateString;
-                lastDateString = newDateString;
+            const dateEl = document.getElementById("date");
+            const isGreetingEnabled = localStorage.getItem("greetingEnabled") === "true";
+
+            // If greeting is enabled show greeting even when analog clock is active
+            if (isGreetingEnabled) {
+                const newGreeting = getGreeting();
+                if (newGreeting !== lastGreetingString) {
+                    dateEl.style.display = "block";
+                    dateEl.innerText = newGreeting;
+                    lastGreetingString = newGreeting;
+                }
+            } else {
+                // Update date if date actually changed or if it's the first time
+                if (newDateString !== lastDateString) {
+                    dateEl.innerText = newDateString;
+                    lastDateString = newDateString;
+                }
             }
         }
     }
@@ -507,15 +520,13 @@ async function initializeClock() {
             localStorage.setItem("greetingEnabled", "true");
         }
 
-        greetingCheckbox.checked = localStorage.getItem("greetingEnabled") === "true";
-        greetingCheckbox.disabled = localStorage.getItem("clocktype") !== "digital";
+    greetingCheckbox.checked = localStorage.getItem("greetingEnabled") === "true";
 
         digitalCheckbox.addEventListener("change", function () {
             saveCheckboxState("digitalCheckboxState", digitalCheckbox);
             if (digitalCheckbox.checked) {
                 timeformatField.classList.remove("inactive");
                 greetingField.classList.remove("inactive");
-                greetingCheckbox.disabled = false; // Enable greeting toggle
                 localStorage.setItem("clocktype", "digital");
                 clocktype = localStorage.getItem("clocktype");
                 displayClock();
@@ -527,7 +538,6 @@ async function initializeClock() {
             } else {
                 timeformatField.classList.add("inactive");
                 greetingField.classList.add("inactive");
-                greetingCheckbox.disabled = true; // Disable greeting toggle
                 localStorage.setItem("clocktype", "analog");
                 clocktype = localStorage.getItem("clocktype");
                 stopDigitalClock();
