@@ -57,3 +57,21 @@ function loadActiveStatus(key, element) {
         element.classList.add("inactive");
     }
 }
+
+// Initialize Auto Update switch in Settings UI
+document.addEventListener('DOMContentLoaded', function () {
+    try {
+        var autoCheckbox = document.getElementById('autoUpdateCheckbox');
+        if (!autoCheckbox) return;
+        var stored = localStorage.getItem('autoUpdateDefaults');
+        // default to true when not set
+        var isEnabled = (stored === null) ? true : (stored === 'true');
+        autoCheckbox.checked = isEnabled;
+        autoCheckbox.addEventListener('change', function () {
+            localStorage.setItem('autoUpdateDefaults', autoCheckbox.checked ? 'true' : 'false');
+            try { if (window.mynt_defaults_mark_user_modified) window.mynt_defaults_mark_user_modified(); } catch (e) {}
+        });
+    } catch (e) {
+        // ignore
+    }
+});
