@@ -536,8 +536,8 @@ async function initializeClock() {
                 saveActiveStatus("timeformatField", "active");
                 saveActiveStatus("greetingField", "active");
             } else {
+                // Keep greetingField interactive even when analog clock is active.
                 timeformatField.classList.add("inactive");
-                greetingField.classList.add("inactive");
                 localStorage.setItem("clocktype", "analog");
                 clocktype = localStorage.getItem("clocktype");
                 stopDigitalClock();
@@ -546,7 +546,6 @@ async function initializeClock() {
                 displayClock();
                 resetDateDisplay();
                 saveActiveStatus("timeformatField", "inactive");
-                saveActiveStatus("greetingField", "inactive");
             }
         });
 
@@ -564,10 +563,12 @@ async function initializeClock() {
             updatedigiClock();
         });
 
-        loadCheckboxState("digitalCheckboxState", digitalCheckbox);
-        loadCheckboxState("hourcheckboxState", hourcheckbox);
-        loadActiveStatus("timeformatField", timeformatField);
-        loadActiveStatus("greetingField", greetingField);
+    loadCheckboxState("digitalCheckboxState", digitalCheckbox);
+    loadCheckboxState("hourcheckboxState", hourcheckbox);
+    loadActiveStatus("timeformatField", timeformatField);
+    // Ensure greeting field remains interactive so the checkbox is clickable even when analog clock is active
+    greetingField.classList.remove("inactive");
+    saveActiveStatus("greetingField", "active");
     });
 }
 
