@@ -1556,14 +1556,8 @@ body #bookmarkButton.bookmark-button.rotate {
 	flex-shrink: 0;
 	width: 24px;
 	height: 24px;
-}
-
-.file-item.folder svg {
-	fill: var(--darkerColor-blue);
-}
-
-.file-item.file svg {
 	fill: var(--darkColor-blue);
+	transition: fill 0.2s ease;
 }
 
 .file-item:hover svg {
