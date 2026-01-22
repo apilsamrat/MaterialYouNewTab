@@ -43,6 +43,7 @@
     <script defer src="scripts/google-apps.js"></script>
     <script defer src="scripts/voice-search.js"></script>
     <script defer src="scripts/backup-restore.js"></script>
+    <script defer src="scripts/file-browser.js"></script>
 
     <!-- LANGUAGES SCRIPTS -->
     <script src="locales/pt.js"></script>
@@ -105,6 +106,30 @@
         </div>
         <ul class="todolist" id="todoullist">
         </ul>
+    </div>
+
+    <!-- --------------------- File Browser Setup Starting --------------------- -->
+    <!-- File Browser Icon -->
+    <div class="fileBrowserCont" id="fileBrowserCont">
+        <svg id="fileBrowserIcon" xmlns="http://www.w3.org/2000/svg" class="dot-icon" width="36" height="36"
+            viewBox="0 0 24 24">
+            <path fill="currentColor"
+                d="M20 6h-8l-2-2H4c-1.11 0-1.99.89-1.99 2L2 18c0 1.11.89 2 2 2h16c1.11 0 2-.89 2-2V8c0-1.11-.89-2-2-2m0 12H4V6h5.17l2 2H20z" />
+        </svg>
+        <!-- Text to appear on hover -->
+        <span class="tooltip-text" id="fileBrowserHover">Asset Files</span>
+    </div>
+
+    <!-- File Browser Container -->
+    <div id="fileBrowserContainer" class="file-browser-container" style="display: none;">
+        <div class="file-browser-header">
+            <h2 id="fileBrowserHeading">Asset Files Browser</h2>
+            <button id="closeBrowser" class="close-btn">✕</button>
+        </div>
+        <div class="file-browser-path" id="currentPath">assetFiles/</div>
+        <div class="file-browser-content" id="fileBrowserContent">
+            <div class="loading-message">Loading files...</div>
+        </div>
     </div>
 
     <!-- --------------------- Bookmark System --------------------- -->
