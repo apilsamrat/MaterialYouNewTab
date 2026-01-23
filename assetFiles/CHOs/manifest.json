@@ -18,12 +18,12 @@
     {
       "name": "Environmental Science CHO.pdf",
       "type": "file",
-      "path": "assetFiles/CHOs/Environmental Science CHO.pdf"
+      "path": "assetFiles/CHOs/Environmental Sciences CHO.pdf"
     },
     {
-      "name": "Frontend Frameword and Libraries CHO.pdf",
+      "name": "Frontend Frameworks and Libraries CHO.pdf",
       "type": "file",
-      "path": "assetFiles/CHOs/Frontend Frameword and Libraries CHO.pdf"
+      "path": "assetFiles/CHOs/Front-end Frameworks and Libraries CHO.pdf"
     },
     {
       "name": "Integrated Project II CHO.pdf",
@@ -36,9 +36,9 @@
       "path": "assetFiles/CHOs/Machine Learning Systems for Real World CHO.pdf"
     },
     {
-      "name": "Object Oriented Engineering CHO.pdf",
+      "name": "Object Oriented Software Engineering CHO.pdf",
       "type": "file",
-      "path": "assetFiles/CHOs/Object Oriented Engineering CHO.pdf"
+      "path": "assetFiles/CHOs/Object Oriented Software Engineering CHO.pdf"
     }
   ]
 }

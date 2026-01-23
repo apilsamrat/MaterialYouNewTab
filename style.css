@@ -1146,7 +1146,7 @@ body #bookmarkButton.bookmark-button.rotate {
 	position: fixed;
 	display: inline-block;
 	margin: 10px;
-	top: var(--gap);
+	top: calc(var(--gap) + 56px);
 	inset-inline-start: var(--gap);
 	font-size: 25px;
 	background: transparent;
@@ -1160,6 +1160,120 @@ body #bookmarkButton.bookmark-button.rotate {
 	visibility: visible;
 	opacity: 1;
 }
+
+/* Settings Icon */
+.settingsIconCont {
+	position: fixed;
+	display: inline-block;
+	margin: 10px;
+	top: var(--gap);
+	inset-inline-start: var(--gap);
+	font-size: 25px;
+	background: transparent;
+	border: none;
+	cursor: pointer;
+	z-index: 2;
+}
+
+.settingsIconCont:hover .tooltip-text {
+	visibility: visible;
+	opacity: 1;
+}
+
+/* Settings Sub-Menu */
+.settingsSubMenu {
+	position: fixed;
+	top: calc(var(--gap) + 56px);
+	inset-inline-start: var(--gap);
+	background-color: var(--accentLightTint-blue);
+	border-radius: 15px;
+	padding: 8px;
+	box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+	z-index: 3;
+	min-width: 180px;
+	opacity: 0;
+	transform: translateY(-20px);
+	transition: opacity 0.3s ease, transform 0.3s ease;
+	pointer-events: none;
+}
+
+.settingsSubMenu.show {
+	opacity: 1;
+	transform: translateY(0);
+	pointer-events: auto;
+}
+
+body[data-bg="wallpaper"] .settingsSubMenu {
+	background-color: color-mix(
+		in srgb,
+		var(--accentLightTint-blue) calc(var(--transparency) * 2),
+		transparent
+	);
+	backdrop-filter: blur(10px);
+}
+
+.settingsSubButton {
+	width: 100%;
+	display: flex;
+	align-items: center;
+	gap: 10px;
+	padding: 10px 12px;
+	background: transparent;
+	border: none;
+	border-radius: 10px;
+	cursor: pointer;
+	transition: background-color 0.2s ease;
+	color: var(--darkColor-blue);
+	font-size: 14px;
+	font-weight: 500;
+}
+
+.settingsSubButton:hover {
+	background-color: color-mix(
+		in srgb,
+		var(--darkColor-blue) 10%,
+		transparent
+	);
+}
+
+.settingsSubButton svg {
+	fill: var(--darkColor-blue);
+	flex-shrink: 0;
+}
+
+.settingsSubButton span {
+	text-align: left;
+}
+
+/* Wallpaper Shuffle Button */
+.wallpaperShuffleCont {
+	position: fixed;
+	display: inline-block;
+	margin: 10px;
+	bottom: var(--gap);
+	inset-inline-end: calc(var(--gap) + 60px);
+	font-size: 25px;
+	background: transparent;
+	border: none;
+	cursor: pointer;
+	z-index: 2;
+	transition: transform 0.2s ease;
+}
+
+.wallpaperShuffleCont:hover {
+	transform: scale(1.1);
+}
+
+.wallpaperShuffleCont:hover .tooltip-text {
+	visibility: visible;
+	opacity: 1;
+}
+
+.wallpaperShuffleCont .dot-icon {
+	padding: 5px; /* Slightly more padding for the shuffle icon */
+}
+
+
 
 .todo-container {
 	display: grid;
@@ -1426,7 +1540,7 @@ body #bookmarkButton.bookmark-button.rotate {
 	position: fixed;
 	display: inline-block;
 	margin: 10px;
-	top: calc(var(--gap) + 60px);
+	top: calc(var(--gap) + 112px);
 	inset-inline-start: var(--gap);
 	font-size: 25px;
 	background: transparent;

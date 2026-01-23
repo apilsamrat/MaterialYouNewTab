@@ -99,20 +99,33 @@ document.getElementById("imageUpload").addEventListener("change", function (even
     }
 });
 
-// Fetch and apply random image as background
-const RANDOM_IMAGE_URL = "https://picsum.photos/1920/1080";
+// Fetch and apply random image as background from local images
+const LOCAL_IMAGES_FOLDER = "images/landscapes/";
+const TOTAL_LOCAL_IMAGES = 19;
+const WALLPAPER_TIMESTAMP_KEY = "wallpaper_last_update_timestamp";
+const WALLPAPER_IMAGE_NUMBER_KEY = "wallpaper_current_image_number";
 
 async function applyRandomImage(showConfirmation = true) {
    
     try {
-        const response = await fetch(RANDOM_IMAGE_URL);
-        const blob = await response.blob(); // Get Blob from response
-        const imageUrl = URL.createObjectURL(blob);
+        // Select a random image from 1 to 19
+        const randomImageNumber = Math.floor(Math.random() * TOTAL_LOCAL_IMAGES) + 1;
+        const imageUrl = `${LOCAL_IMAGES_FOLDER}${randomImageNumber}.jpg`;
+        
+        // Fetch the local image
+        const response = await fetch(imageUrl);
+        const blob = await response.blob();
+        const blobUrl = URL.createObjectURL(blob);
 
-        document.body.style.setProperty("--bg-image", `url(${imageUrl})`);
+        document.body.style.setProperty("--bg-image", `url(${blobUrl})`);
         await saveImageToIndexedDB(blob, true);
+        
+        // Store current timestamp and image number in localStorage
+        localStorage.setItem(WALLPAPER_TIMESTAMP_KEY, new Date().getTime().toString());
+        localStorage.setItem(WALLPAPER_IMAGE_NUMBER_KEY, randomImageNumber.toString());
+        
         toggleBackgroundType(true);
-        setTimeout(() => URL.revokeObjectURL(imageUrl), 2000); // Delay URL revocation
+        setTimeout(() => URL.revokeObjectURL(blobUrl), 2000); // Delay URL revocation
     } catch (error) {
         console.error("Error fetching random image:", error);
     }
@@ -125,41 +138,50 @@ function toggleBackgroundType(hasWallpaper) {
 
 // Check and update image on page load
 function checkAndUpdateImage() {
+    // Get timestamp from localStorage
+    const lastUpdateTimestamp = localStorage.getItem(WALLPAPER_TIMESTAMP_KEY);
+    const now = new Date().getTime();
+    
+    // First check if we need to update based on time
+    let needsUpdate = false;
+    
+    if (!lastUpdateTimestamp) {
+        needsUpdate = true;
+    } else {
+        const lastUpdate = parseInt(lastUpdateTimestamp);
+        const hoursDifference = (now - lastUpdate) / (1000 * 60 * 60);
+        if (hoursDifference >= 24) {
+            needsUpdate = true;
+        }
+    }
+    
     loadImageAndDetails()
         .then(([blob, savedTimestamp, imageType]) => {
-            const now = new Date();
-            const lastUpdate = new Date(savedTimestamp);
 
-            // No image or invalid data
-            if (!blob || !savedTimestamp || isNaN(lastUpdate)) {
-                toggleBackgroundType(false);
-                return;
-            }
-
-            // Create a new Blob URL dynamically
-            const imageUrl = URL.createObjectURL(blob);
-
-            if (imageType === "upload") {
+            // If it's an uploaded image, always show it
+            if (blob && imageType === "upload") {
+                const imageUrl = URL.createObjectURL(blob);
                 document.body.style.setProperty("--bg-image", `url(${imageUrl})`);
                 toggleBackgroundType(true);
+                setTimeout(() => URL.revokeObjectURL(imageUrl), 1500);
                 return;
             }
 
-            if (lastUpdate.toDateString() !== now.toDateString()) {
-                // Refresh random image if a new day
+            // For random images, check if we need to update
+            if (needsUpdate || !blob) {
+                // Fetch a new random image
                 applyRandomImage(false);
             } else {
                 // Reapply the saved random image
+                const imageUrl = URL.createObjectURL(blob);
                 document.body.style.setProperty("--bg-image", `url(${imageUrl})`);
                 toggleBackgroundType(true);
+                setTimeout(() => URL.revokeObjectURL(imageUrl), 1500);
             }
-
-            // Clean up the Blob URL after setting the background
-            setTimeout(() => URL.revokeObjectURL(imageUrl), 1500);
         })
         .catch((error) => {
             console.error("Error loading image details:", error);
-            toggleBackgroundType(false);
+            applyRandomImage(false);
         });
 }
 
@@ -180,6 +202,8 @@ document.getElementById("clearImage").addEventListener("click", async function (
         if (await confirmPrompt(confirmationMessage)) {
             try {
                 await clearImageFromIndexedDB();
+                localStorage.removeItem(WALLPAPER_TIMESTAMP_KEY);
+                localStorage.removeItem(WALLPAPER_IMAGE_NUMBER_KEY);
                 document.body.style.removeProperty("--bg-image");
                 toggleBackgroundType(false);
             } catch (error) {

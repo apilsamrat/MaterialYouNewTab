@@ -83,6 +83,74 @@ menuButton.addEventListener("click", () => {
     }
 });
 
+// Settings icon functionality - toggle sub-menu with smooth animation
+const settingsSubMenu = document.getElementById("settingsSubMenu");
+const settingsIcon = document.getElementById("settingsIconCont");
+let isSettingsOpen = false;
+
+function toggleSettings(event) {
+    if (event) event.stopPropagation();
+    
+    if (isSettingsOpen) {
+        // Hide settings menu
+        if (settingsSubMenu) {
+            settingsSubMenu.classList.remove("show");
+            setTimeout(() => {
+                settingsSubMenu.style.display = "none";
+            }, 300);
+        }
+        isSettingsOpen = false;
+    } else {
+        // Show settings menu
+        if (settingsSubMenu) {
+            settingsSubMenu.style.display = "block";
+            setTimeout(() => {
+                settingsSubMenu.classList.add("show");
+            }, 10);
+        }
+        isSettingsOpen = true;
+    }
+}
+
+if (settingsIcon) {
+    settingsIcon.addEventListener("click", toggleSettings);
+}
+
+// Close sub-menu when clicking outside
+if (settingsIcon && settingsSubMenu) {
+    document.addEventListener("click", (e) => {
+        if (!settingsIcon.contains(e.target) && !settingsSubMenu.contains(e.target)) {
+            if (isSettingsOpen) {
+                settingsSubMenu.classList.remove("show");
+                setTimeout(() => {
+                    settingsSubMenu.style.display = "none";
+                }, 300);
+                isSettingsOpen = false;
+            }
+        }
+    });
+}
+
+// Shuffle background button
+const shuffleBackgroundBtn = document.getElementById("shuffleBackgroundBtn");
+if (shuffleBackgroundBtn) {
+    shuffleBackgroundBtn.addEventListener("click", () => {
+        // Trigger wallpaper shuffle directly (works even if wallpaperShuffleCont button is removed)
+        const wallpaperBtn = document.getElementById("wallpaperShuffleCont");
+        if (wallpaperBtn) {
+            wallpaperBtn.click();
+        } else if (typeof applyRandomImage !== 'undefined') {
+            applyRandomImage(false);
+        }
+        // Close settings menu
+        settingsSubMenu.classList.remove("show");
+        setTimeout(() => {
+            settingsSubMenu.style.display = "none";
+        }, 300);
+        isSettingsOpen = false;
+    });
+}
+
 //   ----------Hiding Menu Bar--------
 menuBar.addEventListener("click", (event) => {
     if (event.target === menuBar) {
