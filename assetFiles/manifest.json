@@ -4,11 +4,6 @@
       "name": "Course Handouts",
       "type": "folder",
       "path": "assetFiles/CHOs"
-    },
-      {
-      "name": "Essentials",
-      "type": "folder",
-      "path": "assetFiles/essentials"
     }
   ]
 }
