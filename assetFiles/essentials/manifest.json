@@ -4,6 +4,22 @@
       "name": "ETE dateSheet",
       "type": "file",
       "path": "assetFiles/essentials/End Term DateSheet 4th Sem.pdf"
+    },
+    {
+      "name": "CSA PYQ",
+      "type": "file",
+      "path": "assetFiles/essentials/CSA_PYQ.pdf"
+    },
+    {
+      "name": "OOSE PYQ",
+      "type": "file",
+      "path": "assetFiles/essentials/OOSE_PYQ.pdf"
+    },
+    {
+      "name": "ML PYQ",
+      "type": "file",
+      "path": "assetFiles/essentials/ML_PYQ.pdf"
     }
+    
   ]
 }
